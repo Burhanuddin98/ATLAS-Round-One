@@ -4,6 +4,9 @@ from materials_plot import MatPlotMini
 
 # ui_helpers.py (modify make_geometry_dock signature + body)
 
+from PySide6 import QtWidgets, QtCore
+from materials_plot import MatPlotMini
+
 def make_geometry_dock(parent, on_load_geometry, on_mode_changed, on_part_selected, on_enclosure_now=None):
     widget = QtWidgets.QWidget()
     layout = QtWidgets.QVBoxLayout(widget)
@@ -15,7 +18,6 @@ def make_geometry_dock(parent, on_load_geometry, on_mode_changed, on_part_select
     combo_mode.addItems(["Shaded", "Wireframe"])
     combo_mode.currentIndexChanged.connect(on_mode_changed)
 
-    # --- Enclosure controls ---
     chk_enclosure = QtWidgets.QCheckBox("Auto add bounding box if not watertight")
     chk_enclosure.setChecked(True)
 
@@ -26,11 +28,10 @@ def make_geometry_dock(parent, on_load_geometry, on_mode_changed, on_part_select
     row_pad.addWidget(QtWidgets.QLabel("Pad (%)"))
     spin_pad = QtWidgets.QSpinBox()
     spin_pad.setRange(0, 100)
-    spin_pad.setValue(5)  # default 5%
+    spin_pad.setValue(5)
     row_pad.addWidget(spin_pad)
     row_pad.addStretch(1)
 
-    # NEW: force-add enclosure button
     btn_enclosure_now = QtWidgets.QPushButton("Add/Update Enclosure Now")
     if on_enclosure_now is not None:
         btn_enclosure_now.clicked.connect(on_enclosure_now)
@@ -59,7 +60,6 @@ def make_geometry_dock(parent, on_load_geometry, on_mode_changed, on_part_select
     dock.setFeatures(QtWidgets.QDockWidget.DockWidgetMovable | QtWidgets.QDockWidget.DockWidgetFloatable)
     parent.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
 
-    # RETURN the extra widgets too:
     return dock, combo_mode, parts_list, chk_enclosure, combo_enclosure_mode, spin_pad, btn_enclosure_now
 
 def make_materials_dock(parent, on_search, on_material_selected, on_assign):
